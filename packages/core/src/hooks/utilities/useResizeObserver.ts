@@ -1,5 +1,5 @@
-import {useEffect, useMemo} from 'react';
-import {useEvent} from '@dnd-kit/utilities';
+import { useEffect, useMemo } from 'react';
+import { useEvent } from '@dnd-kit/utilities';
 
 interface Arguments {
   callback: ResizeObserverCallback;
@@ -10,7 +10,7 @@ interface Arguments {
  * Returns a new ResizeObserver instance bound to the `onResize` callback.
  * If `ResizeObserver` is undefined in the execution environment, returns `undefined`.
  */
-export function useResizeObserver({callback, disabled}: Arguments) {
+export function useResizeObserver({ callback, disabled }: Arguments) {
   const handleResize = useEvent(callback);
   const resizeObserver = useMemo(
     () => {
@@ -22,7 +22,7 @@ export function useResizeObserver({callback, disabled}: Arguments) {
         return undefined;
       }
 
-      const {ResizeObserver} = window;
+      const { ResizeObserver } = window;
 
       return new ResizeObserver(handleResize);
     },
@@ -31,7 +31,11 @@ export function useResizeObserver({callback, disabled}: Arguments) {
   );
 
   useEffect(() => {
-    return () => resizeObserver?.disconnect();
+    return () => {
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+    }
   }, [resizeObserver]);
 
   return resizeObserver;

@@ -1,6 +1,6 @@
-import {useRef, useCallback} from 'react';
+import { useRef, useCallback } from 'react';
 
-import {useEvent} from './useEvent';
+import { useEvent } from './useEvent';
 
 export function useNodeRef(
   onChange?: (
@@ -12,8 +12,11 @@ export function useNodeRef(
   const node = useRef<HTMLElement | null>(null);
   const setNodeRef = useCallback(
     (element: HTMLElement | null) => {
+
       if (element !== node.current) {
-        onChangeHandler?.(element, node.current);
+        if (onChangeHandler !== null) {
+          onChangeHandler(element, node.current);
+        }
       }
 
       node.current = element;

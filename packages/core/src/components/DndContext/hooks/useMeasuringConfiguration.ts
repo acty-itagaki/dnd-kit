@@ -1,28 +1,46 @@
-import {useMemo} from 'react';
-import type {DeepRequired} from '@dnd-kit/utilities';
+import { useMemo } from 'react';
+import type { DeepRequired } from '@dnd-kit/utilities';
 
-import {defaultMeasuringConfiguration} from '../defaults';
-import type {MeasuringConfiguration} from '../types';
+import { defaultMeasuringConfiguration } from '../defaults';
+import type { MeasuringConfiguration } from '../types';
 
 export function useMeasuringConfiguration(
   config: MeasuringConfiguration | undefined
 ): DeepRequired<MeasuringConfiguration> {
-  return useMemo(
-    () => ({
+  // return useMemo(
+  //   () => ({
+  //     draggable: {
+  //       ...defaultMeasuringConfiguration.draggable,
+  //       ...config?.draggable,
+  //     },
+  //     droppable: {
+  //       ...defaultMeasuringConfiguration.droppable,
+  //       ...config?.droppable,
+  //     },
+  //     dragOverlay: {
+  //       ...defaultMeasuringConfiguration.dragOverlay,
+  //       ...config?.dragOverlay,
+  //     },
+  //   }),
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  //   [config?.draggable, config?.droppable, config?.dragOverlay]
+  // );
+
+  return useMemo(() => {
+    const mergedConfig = {
       draggable: {
         ...defaultMeasuringConfiguration.draggable,
-        ...config?.draggable,
+        ...(config && config.draggable),
       },
       droppable: {
         ...defaultMeasuringConfiguration.droppable,
-        ...config?.droppable,
+        ...(config && config.droppable),
       },
       dragOverlay: {
         ...defaultMeasuringConfiguration.dragOverlay,
-        ...config?.dragOverlay,
+        ...(config && config.dragOverlay),
       },
-    }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [config?.draggable, config?.droppable, config?.dragOverlay]
-  );
+    };
+    return mergedConfig;
+  }, [config]);
 }

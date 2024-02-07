@@ -1,15 +1,15 @@
-import {useRef} from 'react';
-import {useIsomorphicLayoutEffect} from '@dnd-kit/utilities';
+import { useRef } from 'react';
+import { useIsomorphicLayoutEffect } from '@dnd-kit/utilities';
 
-import {getRectDelta} from '../../../utilities/rect';
-import {getFirstScrollableAncestor} from '../../../utilities/scroll';
-import type {ClientRect} from '../../../types';
-import type {DraggableNode} from '../../../store';
-import type {MeasuringFunction} from '../types';
+import { getRectDelta } from '../../../utilities/rect';
+import { getFirstScrollableAncestor } from '../../../utilities/scroll';
+import type { ClientRect } from '../../../types';
+import type { DraggableNode } from '../../../store';
+import type { MeasuringFunction } from '../types';
 
 interface Options {
   activeNode: DraggableNode | null | undefined;
-  config: boolean | {x: boolean; y: boolean} | undefined;
+  config: boolean | { x: boolean; y: boolean } | undefined;
   initialRect: ClientRect | null;
   measure: MeasuringFunction;
 }
@@ -21,7 +21,7 @@ export function useLayoutShiftScrollCompensation({
   config = true,
 }: Options) {
   const initialized = useRef(false);
-  const {x, y} = typeof config === 'boolean' ? {x: config, y: config} : config;
+  const { x, y } = typeof config === 'boolean' ? { x: config, y: config } : config;
 
   useIsomorphicLayoutEffect(() => {
     const disabled = !x && !y;
@@ -38,7 +38,9 @@ export function useLayoutShiftScrollCompensation({
     }
 
     // Get the most up to date node ref for the active draggable
-    const node = activeNode?.node.current;
+    // const node = activeNode?.node.current;
+    const node = activeNode && activeNode.node && activeNode.node.current || null;
+
 
     if (!node || node.isConnected === false) {
       // Return early if there is no attached node ref or if the node is

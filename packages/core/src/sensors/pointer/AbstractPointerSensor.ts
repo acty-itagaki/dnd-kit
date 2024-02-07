@@ -5,16 +5,16 @@ import {
   getWindow,
 } from '@dnd-kit/utilities';
 
-import {defaultCoordinates} from '../../utilities';
+import { defaultCoordinates } from '../../utilities';
 import {
   getEventListenerTarget,
   hasExceededDistance,
   Listeners,
 } from '../utilities';
-import {EventName, preventDefault, stopPropagation} from '../events';
-import {KeyboardCode} from '../keyboard';
-import type {SensorInstance, SensorProps, SensorOptions} from '../types';
-import type {Coordinates, DistanceMeasurement} from '../../types';
+import { EventName, preventDefault, stopPropagation } from '../events';
+import { KeyboardCode } from '../keyboard';
+import type { SensorInstance, SensorProps, SensorOptions } from '../types';
+import type { Coordinates, DistanceMeasurement } from '../../types';
 
 interface DistanceConstraint {
   distance: DistanceMeasurement;
@@ -58,7 +58,7 @@ export interface AbstractPointerSensorOptions extends SensorOptions {
   bypassActivationConstraint?(
     props: Pick<AbstractPointerSensorProps, 'activeNode' | 'event' | 'options'>
   ): boolean;
-  onActivation?({event}: {event: Event}): void;
+  onActivation?({ event }: { event: Event }): void;
 }
 
 export type AbstractPointerSensorProps =
@@ -79,8 +79,8 @@ export class AbstractPointerSensor implements SensorInstance {
     private events: PointerEventHandlers,
     listenerTarget = getEventListenerTarget(props.event.target)
   ) {
-    const {event} = props;
-    const {target} = event;
+    const { event } = props;
+    const { target } = event;
 
     this.props = props;
     this.events = events;
@@ -103,11 +103,11 @@ export class AbstractPointerSensor implements SensorInstance {
     const {
       events,
       props: {
-        options: {activationConstraint, bypassActivationConstraint},
+        options: { activationConstraint, bypassActivationConstraint },
       },
     } = this;
 
-    this.listeners.add(events.move.name, this.handleMove, {passive: false});
+    this.listeners.add(events.move.name, this.handleMove, { passive: false });
     this.listeners.add(events.end.name, this.handleEnd);
     this.windowListeners.add(EventName.Resize, this.handleCancel);
     this.windowListeners.add(EventName.DragStart, preventDefault);
@@ -116,8 +116,8 @@ export class AbstractPointerSensor implements SensorInstance {
     this.documentListeners.add(EventName.Keydown, this.handleKeydown);
 
     if (activationConstraint) {
-      if (
-        bypassActivationConstraint?.({
+      if (bypassActivationConstraint &&
+        bypassActivationConstraint({
           event: this.props.event,
           activeNode: this.props.activeNode,
           options: this.props.options,
@@ -157,8 +157,8 @@ export class AbstractPointerSensor implements SensorInstance {
   }
 
   private handleStart() {
-    const {initialCoordinates} = this;
-    const {onStart} = this.props;
+    const { initialCoordinates } = this;
+    const { onStart } = this.props;
 
     if (initialCoordinates) {
       this.activated = true;
@@ -182,10 +182,10 @@ export class AbstractPointerSensor implements SensorInstance {
   }
 
   private handleMove(event: Event) {
-    const {activated, initialCoordinates, props} = this;
+    const { activated, initialCoordinates, props } = this;
     const {
       onMove,
-      options: {activationConstraint},
+      options: { activationConstraint },
     } = props;
 
     if (!initialCoordinates) {
@@ -227,14 +227,14 @@ export class AbstractPointerSensor implements SensorInstance {
   }
 
   private handleEnd() {
-    const {onEnd} = this.props;
+    const { onEnd } = this.props;
 
     this.detach();
     onEnd();
   }
 
   private handleCancel() {
-    const {onCancel} = this.props;
+    const { onCancel } = this.props;
 
     this.detach();
     onCancel();
@@ -247,6 +247,9 @@ export class AbstractPointerSensor implements SensorInstance {
   }
 
   private removeTextSelection() {
-    this.document.getSelection()?.removeAllRanges();
+    const selection = this.document.getSelection();
+    if (selection !== null) {
+      selection.removeAllRanges();
+    }
   }
 }

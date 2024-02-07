@@ -1,7 +1,7 @@
-import React, {cloneElement, useState} from 'react';
-import {useIsomorphicLayoutEffect, usePrevious} from '@dnd-kit/utilities';
+import React, { cloneElement, useState } from 'react';
+import { useIsomorphicLayoutEffect, usePrevious } from '@dnd-kit/utilities';
 
-import type {UniqueIdentifier} from '../../../../types';
+import type { UniqueIdentifier } from '../../../../types';
 
 export type Animation = (
   key: UniqueIdentifier,
@@ -13,7 +13,7 @@ export interface Props {
   children: React.ReactElement | null;
 }
 
-export function AnimationManager({animation, children}: Props) {
+export function AnimationManager({ animation, children }: Props) {
   const [
     clonedChildren,
     setClonedChildren,
@@ -30,8 +30,8 @@ export function AnimationManager({animation, children}: Props) {
       return;
     }
 
-    const key = clonedChildren?.key;
-    const id = clonedChildren?.props.id;
+    const key = clonedChildren ? clonedChildren.key : undefined;
+    const id = clonedChildren ? clonedChildren.props.id : undefined;
 
     if (key == null || id == null) {
       setClonedChildren(null);
@@ -46,7 +46,7 @@ export function AnimationManager({animation, children}: Props) {
   return (
     <>
       {children}
-      {clonedChildren ? cloneElement(clonedChildren, {ref: setElement}) : null}
+      {clonedChildren ? cloneElement(clonedChildren, { ref: setElement }) : null}
     </>
   );
 }

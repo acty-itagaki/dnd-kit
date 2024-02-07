@@ -1,5 +1,5 @@
-import {CSS, useEvent, getWindow} from '@dnd-kit/utilities';
-import type {DeepRequired, Transform} from '@dnd-kit/utilities';
+import { CSS, useEvent, getWindow } from '@dnd-kit/utilities';
+import type { DeepRequired, Transform } from '@dnd-kit/utilities';
 
 import type {
   Active,
@@ -7,12 +7,12 @@ import type {
   DraggableNodes,
   DroppableContainers,
 } from '../../../store';
-import type {ClientRect, UniqueIdentifier} from '../../../types';
-import {getMeasurableNode} from '../../../utilities/nodes';
-import {scrollIntoViewIfNeeded} from '../../../utilities/scroll';
-import {parseTransform} from '../../../utilities/transform';
-import type {MeasuringConfiguration} from '../../DndContext';
-import type {Animation} from '../components';
+import type { ClientRect, UniqueIdentifier } from '../../../types';
+import { getMeasurableNode } from '../../../utilities/nodes';
+import { scrollIntoViewIfNeeded } from '../../../utilities/scroll';
+import { parseTransform } from '../../../utilities/transform';
+import type { MeasuringConfiguration } from '../../DndContext';
+import type { Animation } from '../components';
 
 interface SharedParameters {
   active: {
@@ -67,7 +67,7 @@ export type DropAnimationFunction = (
 
 type CleanupFunction = () => void;
 
-export interface DropAnimationSideEffectsParameters extends SharedParameters {}
+export interface DropAnimationSideEffectsParameters extends SharedParameters { }
 
 export type DropAnimationSideEffects = (
   parameters: DropAnimationSideEffectsParameters
@@ -92,11 +92,11 @@ interface DefaultDropAnimationSideEffectsOptions {
 
 export const defaultDropAnimationSideEffects = (
   options: DefaultDropAnimationSideEffectsOptions
-): DropAnimationSideEffects => ({active, dragOverlay}) => {
+): DropAnimationSideEffects => ({ active, dragOverlay }) => {
   const originalStyles: Record<string, string> = {};
-  const {styles, className} = options;
+  const { styles, className } = options;
 
-  if (styles?.active) {
+  if (styles && styles.active) {
     for (const [key, value] of Object.entries(styles.active)) {
       if (value === undefined) {
         continue;
@@ -107,7 +107,7 @@ export const defaultDropAnimationSideEffects = (
     }
   }
 
-  if (styles?.dragOverlay) {
+  if (styles && styles.dragOverlay) {
     for (const [key, value] of Object.entries(styles.dragOverlay)) {
       if (value === undefined) {
         continue;
@@ -117,11 +117,11 @@ export const defaultDropAnimationSideEffects = (
     }
   }
 
-  if (className?.active) {
+  if (className && className.active) {
     active.node.classList.add(className.active);
   }
 
-  if (className?.dragOverlay) {
+  if (className && className.dragOverlay) {
     dragOverlay.node.classList.add(className.dragOverlay);
   }
 
@@ -130,22 +130,22 @@ export const defaultDropAnimationSideEffects = (
       active.node.style.setProperty(key, value);
     }
 
-    if (className?.active) {
+    if (className && className.active) {
       active.node.classList.remove(className.active);
     }
   };
 };
 
 const defaultKeyframeResolver: KeyframeResolver = ({
-  transform: {initial, final},
+  transform: { initial, final },
 }) => [
-  {
-    transform: CSS.Transform.toString(initial),
-  },
-  {
-    transform: CSS.Transform.toString(final),
-  },
-];
+    {
+      transform: CSS.Transform.toString(initial),
+    },
+    {
+      transform: CSS.Transform.toString(final),
+    },
+  ];
 
 export const defaultDropAnimationConfiguration: Required<DropAnimationOptions> = {
   duration: 250,
@@ -188,7 +188,7 @@ export function useDropAnimation({
     if (!measurableNode) {
       return;
     }
-    const {transform} = getWindow(node).getComputedStyle(node);
+    const { transform } = getWindow(node).getComputedStyle(node);
     const parsedTransform = parseTransform(transform);
 
     if (!parsedTransform) {
@@ -227,12 +227,12 @@ export function useDropAnimation({
 function createDefaultDropAnimation(
   options: DropAnimationOptions | undefined
 ): DropAnimationFunction {
-  const {duration, easing, sideEffects, keyframes} = {
+  const { duration, easing, sideEffects, keyframes } = {
     ...defaultDropAnimationConfiguration,
     ...options,
   };
 
-  return ({active, dragOverlay, transform, ...rest}) => {
+  return ({ active, dragOverlay, transform, ...rest }) => {
     if (!duration) {
       // Do not animate if animation duration is zero.
       return;
@@ -263,7 +263,7 @@ function createDefaultDropAnimation(
       ...rest,
       active,
       dragOverlay,
-      transform: {initial: transform, final: finalTransform},
+      transform: { initial: transform, final: finalTransform },
     });
 
     const [firstKeyframe] = animationKeyframes;
@@ -274,7 +274,9 @@ function createDefaultDropAnimation(
       return;
     }
 
-    const cleanup = sideEffects?.({active, dragOverlay, ...rest});
+    // const cleanup = sideEffects?.({ active, dragOverlay, ...rest });
+    const cleanup = sideEffects ? sideEffects({ active, dragOverlay, ...rest }) : undefined;
+
     const animation = dragOverlay.node.animate(animationKeyframes, {
       duration,
       easing,
@@ -283,7 +285,9 @@ function createDefaultDropAnimation(
 
     return new Promise((resolve) => {
       animation.onfinish = () => {
-        cleanup?.();
+        if (cleanup) {
+          cleanup();
+        }
         resolve();
       };
     });

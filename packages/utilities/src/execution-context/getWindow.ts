@@ -14,5 +14,9 @@ export function getWindow(target: Event['target']): typeof window {
     return window;
   }
 
-  return target.ownerDocument?.defaultView ?? window;
+  if(target.ownerDocument == null){
+    return window;
+  }
+  
+  return target.ownerDocument.defaultView ?? window;
 }

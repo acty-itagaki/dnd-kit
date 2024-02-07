@@ -1,19 +1,19 @@
-import React, {useContext} from 'react';
+import React, { useContext } from 'react';
 
-import {applyModifiers, Modifiers} from '../../modifiers';
-import {ActiveDraggableContext} from '../DndContext';
-import {useDndContext} from '../../hooks';
-import {useInitialValue} from '../../hooks/utilities';
+import { applyModifiers, Modifiers } from '../../modifiers';
+import { ActiveDraggableContext } from '../DndContext';
+import { useDndContext } from '../../hooks';
+import { useInitialValue } from '../../hooks/utilities';
 
 import {
   AnimationManager,
   NullifiedContextProvider,
   PositionedOverlay,
 } from './components';
-import type {PositionedOverlayProps} from './components';
+import type { PositionedOverlayProps } from './components';
 
-import {useDropAnimation, useKey} from './hooks';
-import type {DropAnimation} from './hooks';
+import { useDropAnimation, useKey } from './hooks';
+import type { DropAnimation } from './hooks';
 
 export interface Props
   extends Pick<
@@ -53,7 +53,7 @@ export const DragOverlay = React.memo(
       windowRect,
     } = useDndContext();
     const transform = useContext(ActiveDraggableContext);
-    const key = useKey(active?.id);
+    const key = useKey(active ? active.id : undefined);
     const modifiedTransform = applyModifiers(modifiers, {
       activatorEvent,
       active,

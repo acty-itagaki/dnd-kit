@@ -1,9 +1,9 @@
-import {useCallback, useEffect, useMemo, useRef} from 'react';
-import {useInterval, useLazyMemo, usePrevious} from '@dnd-kit/utilities';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useInterval, useLazyMemo, usePrevious } from '@dnd-kit/utilities';
 
-import {getScrollDirectionAndSpeed} from '../../utilities';
-import {Direction} from '../../types';
-import type {Coordinates, ClientRect} from '../../types';
+import { getScrollDirectionAndSpeed } from '../../utilities';
+import { Direction } from '../../types';
+import type { Coordinates, ClientRect } from '../../types';
 
 export type ScrollAncestorSortingFn = (ancestors: Element[]) => Element[];
 
@@ -19,11 +19,11 @@ export interface Options {
   enabled?: boolean;
   interval?: number;
   layoutShiftCompensation?:
-    | boolean
-    | {
-        x: boolean;
-        y: boolean;
-      };
+  | boolean
+  | {
+    x: boolean;
+    y: boolean;
+  };
   order?: TraversalOrder;
   threshold?: {
     x: number;
@@ -66,20 +66,20 @@ export function useAutoScroller({
   delta,
   threshold,
 }: Arguments) {
-  const scrollIntent = useScrollIntent({delta, disabled: !enabled});
+  const scrollIntent = useScrollIntent({ delta, disabled: !enabled });
   const [setAutoScrollInterval, clearAutoScrollInterval] = useInterval();
-  const scrollSpeed = useRef<Coordinates>({x: 0, y: 0});
-  const scrollDirection = useRef<ScrollDirection>({x: 0, y: 0});
+  const scrollSpeed = useRef<Coordinates>({ x: 0, y: 0 });
+  const scrollDirection = useRef<ScrollDirection>({ x: 0, y: 0 });
   const rect = useMemo(() => {
     switch (activator) {
       case AutoScrollActivator.Pointer:
         return pointerCoordinates
           ? {
-              top: pointerCoordinates.y,
-              bottom: pointerCoordinates.y,
-              left: pointerCoordinates.x,
-              right: pointerCoordinates.x,
-            }
+            top: pointerCoordinates.y,
+            bottom: pointerCoordinates.y,
+            left: pointerCoordinates.x,
+            right: pointerCoordinates.x,
+          }
           : null;
       case AutoScrollActivator.DraggableRect:
         return draggingRect;
@@ -114,7 +114,7 @@ export function useAutoScroller({
       }
 
       for (const scrollContainer of sortedScrollableAncestors) {
-        if (canScroll?.(scrollContainer) === false) {
+        if (canScroll && canScroll(scrollContainer) === false) {
           continue;
         }
 
@@ -125,7 +125,7 @@ export function useAutoScroller({
           continue;
         }
 
-        const {direction, speed} = getScrollDirectionAndSpeed(
+        const { direction, speed } = getScrollDirectionAndSpeed(
           scrollContainer,
           scrollContainerRect,
           rect,
@@ -153,8 +153,8 @@ export function useAutoScroller({
         }
       }
 
-      scrollSpeed.current = {x: 0, y: 0};
-      scrollDirection.current = {x: 0, y: 0};
+      scrollSpeed.current = { x: 0, y: 0 };
+      scrollDirection.current = { x: 0, y: 0 };
       clearAutoScrollInterval();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -185,8 +185,8 @@ interface ScrollIntent {
 }
 
 const defaultScrollIntent: ScrollIntent = {
-  x: {[Direction.Backward]: false, [Direction.Forward]: false},
-  y: {[Direction.Backward]: false, [Direction.Forward]: false},
+  x: { [Direction.Backward]: false, [Direction.Forward]: false },
+  y: { [Direction.Backward]: false, [Direction.Forward]: false },
 };
 
 function useScrollIntent({

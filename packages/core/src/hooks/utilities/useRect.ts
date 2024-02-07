@@ -1,11 +1,11 @@
-import {useReducer} from 'react';
-import {useIsomorphicLayoutEffect} from '@dnd-kit/utilities';
+import { useReducer } from 'react';
+import { useIsomorphicLayoutEffect } from '@dnd-kit/utilities';
 
-import type {ClientRect} from '../../types';
-import {getClientRect, Rect} from '../../utilities';
+import type { ClientRect } from '../../types';
+import { getClientRect, Rect } from '../../utilities';
 
-import {useMutationObserver} from './useMutationObserver';
-import {useResizeObserver} from './useResizeObserver';
+import { useMutationObserver } from './useMutationObserver';
+import { useResizeObserver } from './useResizeObserver';
 
 function defaultMeasure(element: HTMLElement) {
   return new Rect(getClientRect(element), element);
@@ -25,7 +25,7 @@ export function useRect(
       }
 
       for (const record of records) {
-        const {type, target} = record;
+        const { type, target } = record;
 
         if (
           type === 'childList' &&
@@ -38,20 +38,28 @@ export function useRect(
       }
     },
   });
-  const resizeObserver = useResizeObserver({callback: measureRect});
+  const resizeObserver = useResizeObserver({ callback: measureRect });
 
   useIsomorphicLayoutEffect(() => {
     measureRect();
 
     if (element) {
-      resizeObserver?.observe(element);
-      mutationObserver?.observe(document.body, {
-        childList: true,
-        subtree: true,
-      });
+      if (resizeObserver) {
+        resizeObserver.observe(element);
+      }
+      if (mutationObserver) {
+        mutationObserver.observe(document.body, {
+          childList: true,
+          subtree: true,
+        });
+      }
     } else {
-      resizeObserver?.disconnect();
-      mutationObserver?.disconnect();
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+      if (mutationObserver) {
+        mutationObserver.disconnect();
+      }
     }
   }, [element]);
 
